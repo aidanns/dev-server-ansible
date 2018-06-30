@@ -14,9 +14,9 @@
   become: yes
   become_user: root
 
-- name: "Install tightvnc-server."
+- name: "Install tigervnc-server."
   yum:
-    name: tightvnc-server
+    name: tigervnc-server
     state: present
   become: yes
   become_user: root
