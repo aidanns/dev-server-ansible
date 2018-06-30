@@ -1,0 +1,29 @@
+---
+
+- name: "Install epel."
+  yum:
+    name: epel-release
+    state: present
+  become: yes
+  become_user: root
+
+- name: "Install xrdp."
+  yum:
+    name: xrdp
+    state: present
+  become: yes
+  become_user: root
+
+- name: "Install tightvnc-server."
+  yum:
+    name: tightvnc-server
+    state: present
+  become: yes
+  become_user: root
+
+- name: "Start xrdp."
+  service:
+    name: xrdp
+    state: started
+  become: yes
+  become_user: root
