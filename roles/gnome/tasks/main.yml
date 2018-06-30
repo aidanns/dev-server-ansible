@@ -1,0 +1,22 @@
+---
+
+- name: "Install the GNOME Desktop group."
+  yum:
+    name: "@^GNOME Desktop"
+    state: present
+  become: yes
+  become_user: root
+
+- name: "Install the Server with GUI group."
+  yum:
+    name: "@^Server with GUI"
+    state: present
+  become: yes
+  become_user: root
+
+- name: "Install the Development and Creative Workstation."
+  yum:
+    name: "@^Development and Creative Workstation"
+    state: present
+  become: yes
+  become_user: root
