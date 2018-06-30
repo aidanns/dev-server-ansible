@@ -1,0 +1,6 @@
+all:
+  hosts:
+    devhost:
+      ansible_host: 54.206.112.8
+      ansible_port: 22
+      ansible_user: centos

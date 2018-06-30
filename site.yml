@@ -1,0 +1,8 @@
+---
+
+- name: "Configure Devhost."
+  hosts:
+    - devhost
+  roles:
+    - xrdp
+    - guacamole
