@@ -1,0 +1,16 @@
+---
+
+- name: "Install epel."
+  yum:
+    name: epel-release
+    state: present
+  become: yes
+  become_user: root
+
+- name: "Install Chromium."
+  yum:
+    name: chromium
+    state: present
+  become: yes
+  become_user: root
+
