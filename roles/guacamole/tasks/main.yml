@@ -1,0 +1,89 @@
+---
+
+- name: "Install epel"
+  yum:
+    name: epel-release
+    state: present
+  become: yes
+  become_user: root
+
+- name: "Install docker"
+  yum:
+    name: docker
+    state: present
+  become: yes
+  become_user: root
+
+- name: "Install docker-python"
+  yum:
+    name: docker-python
+    state: present
+  become: yes
+  become_user: root
+
+- name: "Start the docker service"
+  service:
+    name: docker
+    state: started
+  become: yes
+  become_user: root
+
+- name: "Start guacamole-guacd"
+  docker_container:
+    name: guacamole-guacd
+    image: guacamole/guacd
+    state: started
+    pull: true
+  become: yes
+  become_user: root
+
+- name: "Start guacamole-postgres"
+  docker_container:
+    name: guacamole-postgres
+    image: postgres
+    state: started
+    pull: true
+  become: yes
+  become_user: root
+
+- name: "Render guacamole postgres init script"
+  shell: "docker run --rm guacamole/guacamole /opt/guacamole/bin/initdb.sh --postgres >> /tmp/initdb.sql"
+  args:
+    creates: /tmp/initdb.sql
+  become: yes
+  become_user: root
+
+- name: "Copy the postgres init sql in to the postgres container"
+  shell: "docker cp /tmp/initdb.sql guacamole-postgres:/initdb.sql"
+  become: yes
+  become_user: root
+
+- name: "Render the guacamole init script on to the remote host"
+  template:
+    src: templates/init_guacamole_postgres.sh
+    dest: /tmp/init_guacamole_postgres.sh
+    owner: root
+    group: root
+    mode: 0700
+  become: yes
+  become_user: root
+
+- name: "Copy the guacamole init script in to the postgres container"
+  shell: "docker cp /tmp/init_guacamole_postgres.sh guacamole-postgres:/init_guacamole_postgres.sh"
+  become: yes
+  become_user: root
+
+- name: "Make the script executable inside the container"
+  shell: "docker exec guacamole-postgres /bin/bash -c 'chmod 755 /init_guacamole_postgres.sh'"
+  become: yes
+  become_user: root
+
+- name: "Make the sql readable inside the container"
+  shell: "docker exec guacamole-postgres /bin/bash -c 'chmod 644 /initdb.sql'"
+  become: yes
+  become_user: root
+
+- name: "Run the guacamole init script in the postgres container"
+  shell: "docker exec -u postgres guacamole-postgres /bin/bash -c /init_guacamole_postgres.sh"
+  become: yes
+  become_user: root
