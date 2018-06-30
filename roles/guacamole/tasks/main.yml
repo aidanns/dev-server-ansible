@@ -87,3 +87,21 @@
   shell: "docker exec -u postgres guacamole-postgres /bin/bash -c /init_guacamole_postgres.sh"
   become: yes
   become_user: root
+
+- name: "Start guacamole-guacamole"
+  docker_container:
+    name: guacamole-guacamole
+    image: guacamole/guacamole
+    state: started
+    pull: true
+    links:
+      - "guacamole-guacd:guacd"
+      - "guacamole-postgres:postgres"
+    env:
+      POSTGRES_DATABASE: guacamole_db
+      POSTGRES_USER: guacamole_user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "8080:8080"
+  become: yes
+  become_user: root
