@@ -7,3 +7,4 @@
 * Install guacamole and configure.
 * Switch from tightvnc-server to tigervnc-server.
 * Install Chromium.
+* Install Nginx proxy with automatic letsencrypt certificate generation.
