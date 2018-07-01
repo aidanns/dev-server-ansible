@@ -7,16 +7,35 @@
   become: yes
   become_user: root
 
-- name: "Install docker"
+- name: "Install yum-utils"
   yum:
-    name: docker
+    name: yum-utils
     state: present
   become: yes
   become_user: root
 
-- name: "Install docker-python"
+- name: "Install device-mapper-persistent-data"
   yum:
-    name: docker-python
+    name: device-mapper-persistent-data
+    state: present
+  become: yes
+  become_user: root
+
+- name: "Install lvm2"
+  yum:
+    name: lvm2
+    state: present
+  become: yes
+  become_user: root
+
+- name: "Install docker-ce yum repo"
+  shell: "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo"
+  become: yes
+  become_user: root
+
+- name: "Install docker-ce"
+  yum:
+    name: docker-ce
     state: present
   become: yes
   become_user: root
@@ -116,8 +135,8 @@
     state: started
     pull: true
     volumes:
-      - "/etc/nginx/certs"
-      - "/etc/nginx/vhost.d"
+      - "/etc/nginx/certs:/etc/nginx/certs:ro"
+      - "/etc/nginx/vhost.d:/etc/nginx/vhost.d:ro"
       - "/usr/share/nginx/html"
       - "/var/run/docker.sock:/tmp/docker.sock:ro"
     labels:
@@ -134,9 +153,11 @@
     image: jrcs/letsencrypt-nginx-proxy-companion
     state: started
     pull: true
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
     volumes_from:
       - "guacamole-frontend"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:rw"
+      - "/etc/nginx/certs:/etc/nginx/certs:rw"
+      - "/etc/nginx/vhost.d:/etc/nginx/vhost.d:rw"
   become: yes
   become_user: root

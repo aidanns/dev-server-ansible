@@ -8,3 +8,4 @@
 * Switch from tightvnc-server to tigervnc-server.
 * Install Chromium.
 * Install Nginx proxy with automatic letsencrypt certificate generation.
+* Change to using docker-ce rather than the old docker yum package.
