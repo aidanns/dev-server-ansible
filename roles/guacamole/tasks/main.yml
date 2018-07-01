@@ -101,7 +101,42 @@
       POSTGRES_DATABASE: guacamole_db
       POSTGRES_USER: guacamole_user
       POSTGRES_PASSWORD: password
+      VIRTUAL_HOST: remote.aidanns.com
+      LETSENCRYPT_HOST: remote.aidanns.com
+      LETSENCRYPT_EMAIL: aidanns@gmail.com
     ports:
       - "8080:8080"
+  become: yes
+  become_user: root
+
+- name: "Start nginx"
+  docker_container:
+    name: guacamole-frontend
+    image: jwilder/nginx-proxy:alpine
+    state: started
+    pull: true
+    volumes:
+      - "/etc/nginx/certs"
+      - "/etc/nginx/vhost.d"
+      - "/usr/share/nginx/html"
+      - "/var/run/docker.sock:/tmp/docker.sock:ro"
+    labels:
+      com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: ""
+    ports:
+      - "80:80"
+      - "443:443"
+  become: yes
+  become_user: root
+
+- name: "Start Nginx Letsencrypt sidecar."
+  docker_container:
+    name: guacamole-nginx-letsencrypt-sidecar
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    state: started
+    pull: true
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    volumes_from:
+      - "guacamole-frontend"
   become: yes
   become_user: root
