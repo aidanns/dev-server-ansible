@@ -39,6 +39,13 @@
     state: present
   become: yes
   become_user: root
+  
+- name: "Install docker-python"
+  yum:
+    name: docker-python
+    state: present
+  become: yes
+  become_user: root
 
 - name: "Start the docker service"
   service:
